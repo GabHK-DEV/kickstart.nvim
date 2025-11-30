@@ -117,10 +117,12 @@ return {
     config = function()
       require('nvim-autopairs').setup {}
 
-      -- Optional: integrate with nvim-cmp for better completion
-      local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
-      local cmp = require 'cmp'
-      cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+      -- Optional: integrate with nvim-cmp (only if cmp is available)
+      local cmp_status_ok, cmp = pcall(require, 'cmp')
+      if cmp_status_ok then
+        local cmp_autopairs = require 'nvim-autopairs.completion.cmp'
+        cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+      end
     end,
   },
 }
