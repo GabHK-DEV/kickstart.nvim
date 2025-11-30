@@ -50,7 +50,7 @@ return {
 
       -- Setup mason-nvim-dap
       require('mason-nvim-dap').setup {
-        automatic_setup = true,
+        automatic_installation = true,
         ensure_installed = {
           'js-debug-adapter',
         },
