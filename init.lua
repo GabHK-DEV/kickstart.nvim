@@ -701,6 +701,8 @@ require('lazy').setup({
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
             },
+            eslit = {},
+            ts_ls = {},
           },
         },
       }
@@ -1020,13 +1022,13 @@ require('lazy').setup({
 -- Note: Matugen
 -- Matugen dynamic colorscheme setup
 local function source_matugen()
-  local matugen_path = os.getenv("HOME") .. "/.config/nvim/colors/matugen.lua"
-  local file, err = io.open(matugen_path, "r")
-  
+  local matugen_path = os.getenv 'HOME' .. '/.config/nvim/colors/matugen.lua'
+  local file, err = io.open(matugen_path, 'r')
+
   if err ~= nil then
     -- Fallback theme if matugen hasn't generated a theme yet
-    vim.cmd('colorscheme catppuccin-mocha')
-    vim.notify("Matugen theme not found. Run: matugen image /path/to/wallpaper", vim.log.levels.INFO)
+    vim.cmd 'colorscheme catppuccin-mocha'
+    vim.notify('Matugen theme not found. Run: matugen image /path/to/wallpaper', vim.log.levels.INFO)
   else
     io.close(file)
     dofile(matugen_path)
@@ -1036,20 +1038,20 @@ end
 -- Main function called on matugen reloads
 local function reload_matugen_theme()
   source_matugen()
-  
+
   -- Reload lualine if you're using it
   local lualine_ok, lualine = pcall(require, 'lualine')
   if lualine_ok then
     lualine.setup()
   end
-  
+
   -- Any custom highlight overrides
-  vim.api.nvim_set_hl(0, "Comment", { italic = true })
+  vim.api.nvim_set_hl(0, 'Comment', { italic = true })
 end
 
 -- Register autocmd to listen for matugen updates via SIGUSR1
-vim.api.nvim_create_autocmd("Signal", {
-  pattern = "SIGUSR1",
+vim.api.nvim_create_autocmd('Signal', {
+  pattern = 'SIGUSR1',
   callback = reload_matugen_theme,
 })
 
