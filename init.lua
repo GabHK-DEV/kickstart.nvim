@@ -989,7 +989,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
@@ -1016,6 +1016,45 @@ require('lazy').setup({
     },
   },
 })
+
+-- Note: Matugen
+-- Matugen dynamic colorscheme setup
+local function source_matugen()
+  local matugen_path = os.getenv("HOME") .. "/.config/nvim/colors/matugen.lua"
+  local file, err = io.open(matugen_path, "r")
+  
+  if err ~= nil then
+    -- Fallback theme if matugen hasn't generated a theme yet
+    vim.cmd('colorscheme catppuccin-mocha')
+    vim.notify("Matugen theme not found. Run: matugen image /path/to/wallpaper", vim.log.levels.INFO)
+  else
+    io.close(file)
+    dofile(matugen_path)
+  end
+end
+
+-- Main function called on matugen reloads
+local function reload_matugen_theme()
+  source_matugen()
+  
+  -- Reload lualine if you're using it
+  local lualine_ok, lualine = pcall(require, 'lualine')
+  if lualine_ok then
+    lualine.setup()
+  end
+  
+  -- Any custom highlight overrides
+  vim.api.nvim_set_hl(0, "Comment", { italic = true })
+end
+
+-- Register autocmd to listen for matugen updates via SIGUSR1
+vim.api.nvim_create_autocmd("Signal", {
+  pattern = "SIGUSR1",
+  callback = reload_matugen_theme,
+})
+
+-- Load theme on startup
+reload_matugen_theme()
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
